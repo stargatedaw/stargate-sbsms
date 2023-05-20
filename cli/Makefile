@@ -4,6 +4,8 @@ CXX     ?= c++
 DESTDIR ?=
 PREFIX  ?= /usr
 
+INCLUDE_FLAGS ?= -Isrc -I../include -I../src
+EXTRA_FLAGS ?=
 # Default flags are x86 specific
 PLAT_FLAGS  ?= -msse -msse2 -msse3 -mfpmath=sse -DENABLE_SSE=1
 CFLAGS      ?= -ffast-math  -Wall
@@ -16,13 +18,13 @@ LINK_CFLAGS ?= -lpthread -lm \
 all: sbsms
 
 sbsms:
-	$(CXX) -Isrc -I../include -I../src \
+	$(CXX) $(INCLUDE_FLAGS) $(EXTRA_FLAGS) \
 		$(OPT_FLAGS) $(CFLAGS) $(PLAT_FLAGS) \
 		src/*.cpp ../src/*.cpp \
 		$(LINK_CFLAGS) -o $@
 
 macos_arm:
-	PLAT_FLAGS= CFLAGS+='-I/opt/homebrew/include' make
+	PLAT_FLAGS= EXTRA_FLAGS='-I/opt/homebrew/include' make
 
 install:
 	install -d $(DESTDIR)$(PREFIX)/bin
