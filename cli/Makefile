@@ -8,7 +8,8 @@ PREFIX  ?= /usr
 PLAT_FLAGS  ?= -msse -msse2 -msse3 -mfpmath=sse -DENABLE_SSE=1
 CFLAGS      ?= -ffast-math  -Wall
 OPT_FLAGS   ?= -O3
-LINK_CFLAGS ?= -lpthread $(shell pkg-config --libs sndfile) -lm
+LINK_CFLAGS ?= -lpthread -lm \
+	$(shell pkg-config --libs sndfile 2>/dev/null || echo -lsndfile)
 
 # --------------------------------------------------------------
 
