@@ -2,6 +2,9 @@
 #ifndef IMPORT_H
 #define IMPORT_H
 
+#include "os.h"
+
+
 typedef int (*audio_in_cb)(float *buf, long n, int Fs, void *data);
 
 class AudioDecoder {
@@ -14,6 +17,6 @@ class AudioDecoder {
   virtual ~AudioDecoder() {};
 };
 
-AudioDecoder *import(const char *filename);
+AudioDecoder *import(const PATHCHAR *filename);
 
 #endif

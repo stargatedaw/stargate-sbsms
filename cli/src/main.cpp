@@ -4,6 +4,8 @@
 #include <math.h>
 #include "convert.h"
 
+#include "os.h"
+
 bool progressCB(float progress, const char *msg, void *data) {
   static int lastPercent = 0;
   int percent = (int)(100.0f * progress);
@@ -15,7 +17,7 @@ bool progressCB(float progress, const char *msg, void *data) {
   return true;
 }
 
-int main(int argc, char **argv)
+int _main(int argc, PATHCHAR **argv)
 {
   if(argc<7) {
     printf("usage: sbsms infile<.wav|.aif|.mp3|.sbsms> outfile<.wav|.aif|.sbsms> rate-start[0.01:100] rate-end[0.01:100] halfsteps-start[-48:48] halfsteps-end[-48:48]\n");
@@ -24,15 +26,24 @@ int main(int argc, char **argv)
 
   bool bAnalyze;
   bool bSynthesize;
-  char *filenameIn = argv[1];
-  char *filenameOut = argv[2];
-  
-  if(strstr(filenameIn,".sbsms")) {
+  PATHCHAR *filenameIn = argv[1];
+  PATHCHAR *filenameOut = argv[2];
+
+#ifdef IS_WINDOWS
+  if(wcsstr(filenameIn, L".sbsms")) {
+#else
+  if(strstr(filenameIn, ".sbsms")) {
+#endif
     bAnalyze = false;
   } else {
     bAnalyze = true;
   }
-  if(strstr(filenameOut,".sbsms")) {
+
+#ifdef IS_WINDOWS
+  if(wcsstr(filenameOut, L".sbsms")) {
+#else
+  if(strstr(filenameOut, ".sbsms")) {
+#endif
     bSynthesize = false;
   } else {
     bSynthesize = true;
@@ -41,11 +52,11 @@ int main(int argc, char **argv)
     printf("Can't convert from .sbsms to .sbsms format\n");
     exit(-1);
   }
-  
-  float rate0 = (float)atof(argv[3]);
-  float rate1 = (float)atof(argv[4]);
-  float halfsteps0 = (float)atof(argv[5]);
-  float halfsteps1 = (float)atof(argv[6]);
+
+  float rate0 = (float)PATHTOF(argv[3]);
+  float rate1 = (float)PATHTOF(argv[4]);
+  float halfsteps0 = (float)PATHTOF(argv[5]);
+  float halfsteps1 = (float)PATHTOF(argv[6]);
   if(rate0 < 0.01f || rate0 > 100.0f) {
     printf("rate-start out of bounds\n");
     exit(-1);
@@ -62,13 +73,39 @@ int main(int argc, char **argv)
     printf("halfsteps-end out of bounds\n");
     exit(-1);
   }
-    
+
   float pitch0 = pow(2.0f,halfsteps0/12.0f);
   float pitch1 = pow(2.0f,halfsteps1/12.0f);
-  
+
   while(1) {
-    sbsms_convert(filenameIn, filenameOut, bAnalyze, bSynthesize, progressCB, NULL, rate0, rate1, pitch0, pitch1, 1.0f);
+    sbsms_convert(
+        filenameIn,
+        filenameOut,
+        bAnalyze,
+        bSynthesize,
+        progressCB,
+        NULL,
+        rate0,
+        rate1,
+        pitch0,
+        pitch1,
+        1.0f
+    );
     break;
   }
   printf("\n");
+  return 0;
 }
+
+#ifdef IS_WINDOWS
+    int main(){
+	int argc;
+	LPWSTR* argv = CommandLineToArgvW(GetCommandLineW(), &argc);
+        return _main(argc, argv);
+    }
+#else
+    int main(int argc, char** argv){
+        return _main(argc, argv);
+    }
+#endif
+

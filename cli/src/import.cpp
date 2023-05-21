@@ -3,6 +3,7 @@
 #include "pcm.h"
 #include <map>
 #include <string>
+#include "os.h"
 
 using namespace std;
 
@@ -13,22 +14,28 @@ string lower(string strToConvert)
   }
   return strToConvert;
 }
- 
-AudioDecoder *import(const char *filename)
-{
-  string fname(filename);
-  size_t i = fname.find(".");
-  AudioDecoder *decoder = NULL;
 
-  if(i) {
-    string ext = fname.substr(i+1);
-    string extl = lower(ext);
-    if(!extl.compare("wav") || !extl.compare("aif") || !extl.compare("aiff")) {
-      decoder = new PcmReader(filename);    
-    } else {
-      perror("Error importing file");
-      return NULL;
-    }
+AudioDecoder *import(const PATHCHAR *filename)
+{
+  int len = PATHLEN(filename);
+  if(
+#ifdef IS_WINDOWS
+    len >= 5 && !PATHCMP(&filename[len - 4], L".wav")
+    ||
+    len >= 5 && !PATHCMP(&filename[len - 4], L".aif")
+    ||
+    len >= 6 && !PATHCMP(&filename[len - 5], L".aiff")
+#else
+    len >= 5 && !PATHCMP(&filename[len - 4], ".wav")
+    ||
+    len >= 5 && !PATHCMP(&filename[len - 4], ".aif")
+    ||
+    len >= 6 && !PATHCMP(&filename[len - 5], ".aiff")
+#endif
+  ){
+    return new PcmReader(filename);
+  } else {
+    perror("Error importing file");
+    return NULL;
   }
-  return decoder;
 }

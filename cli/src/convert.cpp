@@ -128,8 +128,19 @@ long SBSMSInterfaceDecoder :: samples(audio *buf, long n)
   return imp->samples(buf,n);
 }
 
-bool sbsms_convert(const char *filenameIn, const char *filenameOut, bool bAnalyze, bool bSynthesize, progress_cb progressCB, void *data, float rate0, float rate1, float pitch0, float pitch1, float volume)
-{  
+bool sbsms_convert(
+  const PATHCHAR *filenameIn, 
+  const PATHCHAR *filenameOut, 
+  bool bAnalyze, 
+  bool bSynthesize, 
+  progress_cb progressCB, 
+  void *data,
+  float rate0, 
+  float rate1, 
+  float pitch0, 
+  float pitch1, 
+  float	volume
+){  
   bool status = true;
   int srOut = 44100;
   long blockSize;
@@ -157,7 +168,11 @@ bool sbsms_convert(const char *filenameIn, const char *filenameOut, bool bAnalyz
     float preProgress = 0.0f;
     decoder = import(filenameIn);
     if(!decoder) {
-      printf("File: %s cannot be opened\n",filenameIn);
+#ifdef IS_WINDOWS
+      printf("File: %ls cannot be opened\n", filenameIn);
+#else
+      printf("File: %s cannot be opened\n", filenameIn);
+#endif
       exit(-1);
     }
     srIn = decoder->getSampleRate();
@@ -177,7 +192,11 @@ bool sbsms_convert(const char *filenameIn, const char *filenameOut, bool bAnalyz
       abuf = (audio*)calloc(blockSize,sizeof(audio));    
       writer = new PcmWriter(filenameOut,samplesToOutput,srOut,channels);
       if(writer->isError()) {
-        printf("File: %s cannot be opened\n",filenameOut);
+#ifdef IS_WINDOWS
+        printf("File: %ls cannot be opened\n", filenameOut);
+#else
+        printf("File: %s cannot be opened\n", filenameOut);
+#endif
         status = false;
         goto cleanup;
       }
