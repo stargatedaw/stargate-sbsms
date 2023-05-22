@@ -20,17 +20,17 @@ AudioDecoder *import(const PATHCHAR *filename)
   int len = PATHLEN(filename);
   if(
 #ifdef IS_WINDOWS
-    len >= 5 && !PATHCMP(&filename[len - 4], L".wav")
+    (len >= 5 && !PATHCMP(&filename[len - 4], L".wav"))
     ||
-    len >= 5 && !PATHCMP(&filename[len - 4], L".aif")
+    (len >= 5 && !PATHCMP(&filename[len - 4], L".aif"))
     ||
-    len >= 6 && !PATHCMP(&filename[len - 5], L".aiff")
+    (len >= 6 && !PATHCMP(&filename[len - 5], L".aiff"))
 #else
-    len >= 5 && !PATHCMP(&filename[len - 4], ".wav")
+    (len >= 5 && !PATHCMP(&filename[len - 4], ".wav"))
     ||
-    len >= 5 && !PATHCMP(&filename[len - 4], ".aif")
+    (len >= 5 && !PATHCMP(&filename[len - 4], ".aif"))
     ||
-    len >= 6 && !PATHCMP(&filename[len - 5], ".aiff")
+    (len >= 6 && !PATHCMP(&filename[len - 5], ".aiff"))
 #endif
   ){
     return new PcmReader(filename);

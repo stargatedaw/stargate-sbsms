@@ -62,7 +62,7 @@ public:
 
   virtual ~SBSMSInterfaceDecoderImp();
   inline long samples(audio *buf, long n);
-  
+
   Resampler *preResampler;
   int channels;
   float *buf;
@@ -73,7 +73,7 @@ public:
   AudioDecoder *decoder;
 };
 
-long convertResampleCB(void *cb_data, SBSMSFrame *data) 
+long convertResampleCB(void *cb_data, SBSMSFrame *data)
 {
   SBSMSInterfaceDecoderImp *iface = (SBSMSInterfaceDecoderImp*) cb_data;
   long n_read_in = iface->decoder->read(iface->buf,iface->block);
@@ -104,16 +104,16 @@ SBSMSInterfaceDecoderImp :: ~SBSMSInterfaceDecoderImp()
   free(abuf);
   delete preResampler;
 }
-  
+
 long SBSMSInterfaceDecoderImp :: samples(audio *buf, long n)
-{ 
+{
   return preResampler->read(buf, n);
 }
-  
+
 SBSMSInterfaceDecoder :: SBSMSInterfaceDecoder(Slide *rateSlide, Slide *pitchSlide, bool bPitchInputReference,
                                                int channels, const SampleCountType &samples, long preSamples,
-                                               SBSMSQuality *quality, AudioDecoder *decoder, float pitch) 
-  : SBSMSInterfaceSliding(rateSlide,pitchSlide,bPitchInputReference,samples,preSamples,quality) 
+                                               SBSMSQuality *quality, AudioDecoder *decoder, float pitch)
+  : SBSMSInterfaceSliding(rateSlide,pitchSlide,bPitchInputReference,samples,preSamples,quality)
 {
   imp = new SBSMSInterfaceDecoderImp(channels,quality,decoder,pitch);
 }
@@ -129,18 +129,18 @@ long SBSMSInterfaceDecoder :: samples(audio *buf, long n)
 }
 
 bool sbsms_convert(
-  const PATHCHAR *filenameIn, 
-  const PATHCHAR *filenameOut, 
-  bool bAnalyze, 
-  bool bSynthesize, 
-  progress_cb progressCB, 
+  const PATHCHAR *filenameIn,
+  const PATHCHAR *filenameOut,
+  bool bAnalyze,
+  bool bSynthesize,
+  progress_cb progressCB,
   void *data,
-  float rate0, 
-  float rate1, 
-  float pitch0, 
-  float pitch1, 
+  float rate0,
+  float rate1,
+  float pitch0,
+  float pitch1,
   float	volume
-){  
+){
   bool status = true;
   int srOut = 44100;
   long blockSize;
@@ -149,8 +149,6 @@ bool sbsms_convert(
   int srIn;
   SampleCountType samplesToOutput;
   SampleCountType samplesToInput;
-  bool bRead = false;
-  bool bWrite = false;
   audio *abuf = NULL;
   float *fbuf = NULL;
   SBSMSInterface *iface = NULL;
@@ -165,7 +163,6 @@ bool sbsms_convert(
   Slide pitchSlide(SlideLinearOutputRate,pitch0,pitch1);
 
   if(bAnalyze) {
-    float preProgress = 0.0f;
     decoder = import(filenameIn);
     if(!decoder) {
 #ifdef IS_WINDOWS
@@ -185,11 +182,11 @@ bool sbsms_convert(
     sbsms = new SBSMS(channels,&quality,bSynthesize);
 
     samplesToOutput = iface->getSamplesToOutput();
- 
+
     if(bSynthesize) {
       blockSize = quality.getFrameSize();
       fbuf = (float*)calloc(blockSize*channels,sizeof(float));
-      abuf = (audio*)calloc(blockSize,sizeof(audio));    
+      abuf = (audio*)calloc(blockSize,sizeof(audio));
       writer = new PcmWriter(filenameOut,samplesToOutput,srOut,channels);
       if(writer->isError()) {
 #ifdef IS_WINDOWS
@@ -203,9 +200,8 @@ bool sbsms_convert(
 
       SampleCountType pos = 0;
       long ret = -1;
-      
+
       while(pos<samplesToOutput && ret) {
-        long lastPercent=0;      
         ret = sbsms->read(iface,abuf,blockSize);
         if(pos+ret > samplesToOutput) {
           ret = (long)(samplesToOutput - pos);
@@ -214,17 +210,17 @@ bool sbsms_convert(
         for(int k=0;k<ret*channels;k++) {
           fbuf[k] *= volume;
         }
-      
+
         if(ret) writer->write(fbuf, ret);
         pos += ret;
-        
+
         float progress = (float)pos / (float)samplesToOutput;
         progressCB(progress,"Progress",data);
       }
       writer->close();
     }
   }
-  
+
  cleanup:
   if(decoderPre) delete decoderPre;
   if(decoder) delete decoder;

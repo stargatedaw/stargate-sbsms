@@ -77,9 +77,9 @@ TimeType Track :: size()
   return point.size();
 }
 
-TrackPoint *Track :: back() 
+TrackPoint *Track :: back()
 {
-  return point.back(); 
+  return point.back();
 }
 
 TrackPoint *Track :: getTrackPoint(const TimeType &time)
@@ -101,7 +101,7 @@ bool Track :: jump(TrackPoint *tp0, TrackPoint *tp1)
     return false;
   }
 }
-          
+
 TrackPoint *Track :: updateFPH(const TimeType &time, int mode, int n, float f0, float f1)
 {
   if(time == start && time < first) {
@@ -158,7 +158,7 @@ TrackPoint *Track :: updateFPH(const TimeType &time, int mode, int n, float f0, 
           tp1->fSynth1 = max(0.0f,min(6.0f,f1 * (tp1->f + dw)));
         }
       }
-  
+
       if(!(tp0->bSplit || tp0->bMerge || tp1->bSplit || tp1->bMerge) && jump(tp0,tp1)) {
         tp1->bJump = true;
         if(tp0->dupStereo && tp1->dupStereo) {
@@ -250,9 +250,9 @@ void Track :: synth(float *out,
                     int mode,
                     int c)
 {
-  float m0, m1;
-  float w0, w1;
-  float ph0, ph1;
+  float m0 = 0.0, m1 = 0.0;
+  float w0 = 0.0, w1 = 0.0;
+  float ph0 = 0.0, ph1 = 0.0;
   bool bTailStart;
   bool bTailEnd;
   if(time >= end) return;

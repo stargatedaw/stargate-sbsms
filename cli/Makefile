@@ -8,7 +8,7 @@ INCLUDE_FLAGS ?= -Isrc -I../include -I../src
 EXTRA_FLAGS ?=
 # Default flags are x86 specific
 PLAT_FLAGS  ?= -msse -msse2 -msse3 -mfpmath=sse -DENABLE_SSE=1
-CFLAGS      ?= -ffast-math  -Wall
+CFLAGS      ?= -ffast-math  -Wall -Wno-enum-compare
 OPT_FLAGS   ?= -O3
 LINK_CFLAGS ?= -lpthread -lm \
 	$(shell pkg-config --libs sndfile 2>/dev/null || echo -lsndfile)

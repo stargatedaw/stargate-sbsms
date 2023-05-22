@@ -50,7 +50,7 @@ public:
   static inline void execute(t_fft *x, t_fft *y, int step);
 };
 
-template <int N, int dir> 
+template <int N, int dir>
 class FloatTwiddles {
 public:
   float c[N];
@@ -63,7 +63,7 @@ public:
   }
 };
 
-template <int N, int dir> 
+template <int N, int dir>
 class FloatTwiddle {
  public:
   static const float *c;
@@ -89,7 +89,7 @@ const float* FloatTwiddle<N,dir>::s = t.s;
 template<int istride, int ostride, int dir>
 class __fft<istride,ostride,2,dir> {
 public:
-  enum { i1 = istride, o1 = ostride, 
+  enum { i1 = istride, o1 = ostride,
          ir0 = 0, ii0 = 1, or0 = 0, oi0 = 1,
          ir1 = i1<<1, ii1 = ir1 + 1, or1 = o1<<1, oi1 = or1 + 1 };
   static inline void execute(t_fft *_x, t_fft *_y, int step) {
@@ -129,7 +129,7 @@ public:
   }
 };
 
-template<int istride, int ostride, int dir> 
+template<int istride, int ostride, int dir>
   class __fft<istride,ostride,5,dir> {
 public:
   enum { N = istride*5,
@@ -178,7 +178,7 @@ public:
   }
 };
 
-template<int istride, int ostride, int dir> 
+template<int istride, int ostride, int dir>
 class __fft<istride,ostride,6,dir> {
 public:
   enum { N = istride*6,
@@ -236,7 +236,7 @@ public:
   }
 };
 
-template<int istride, int ostride, int dir> 
+template<int istride, int ostride, int dir>
 class __fft<istride,ostride,7,dir> {
 public:
   enum { N = istride*7,
@@ -300,7 +300,7 @@ public:
     T50 = b80 - b70; T51 = b81 - b71;
     T60 = -b80 - b60; T61 = -b81 - b61;
     T70 = T00 + T10; T71 = T01 + T11;
-    T80 = T00 + T20; T81 = T01 + T21;    
+    T80 = T00 + T20; T81 = T01 + T21;
     T90 = T00 + T30; T91 = T01 + T31;
     T100 = T40 + b50; T101 = T41 + b51;
     T110 = T50 + b50; T111 = T51 + b51;
@@ -328,7 +328,7 @@ public:
 
 #ifdef ENABLE_SSE
 
-template <int N, int dir> 
+template <int N, int dir>
 class SSETwiddles {
 public:
   simd_vector cs[N];
@@ -342,7 +342,7 @@ public:
   }
 };
 
-template <int N, int dir> 
+template <int N, int dir>
 class SSETwiddle {
 public:
   static const SSETwiddles<N,dir> t;
@@ -381,8 +381,8 @@ public:
          ir1 = (dir==1?_ir3:_ir1),
          ir3 = (dir==1?_ir1:_ir3) };
   static inline void execute(t_fft *x, t_fft *y, int step) {
-    simd_vector v1;
-    simd_vector v2;
+    simd_vector v1 = {};
+    simd_vector v2 = {};
     simd_vector v3;
     simd_vector v4;
     simd_vector v5;
@@ -418,7 +418,7 @@ public:
   }
 };
 
-template<int istride, int ostride> 
+template<int istride, int ostride>
 class __fft<istride,ostride,8,1> {
 public:
   enum { N = istride*8,
@@ -431,11 +431,11 @@ public:
          i6 = i5 + istride, o6 = o5 + ostride,
          i7 = i6 + istride, o7 = o6 + ostride };
   static inline void execute(t_fft *x, t_fft *y, int step) {
-    simd_vector v1,v2,v3,v4,v5,v6,v7,v8;
+    simd_vector v1 = {}, v2 = {},v3,v4,v5,v6,v7,v8;
     simd_vector x02,x37,x15,x17,x53,x46;
-    simd_vector w1, w2, w3, w4;
+    simd_vector w1 = {}, w2 = {}, w3, w4;
     w1 = LOADH(LOADL(w1,x+i0),x+i6);
-    w2 = LOADH(LOADL(w2,x+i4),x+i2);	
+    w2 = LOADH(LOADL(w2,x+i4),x+i2);
     w3 = VADD(w1,w2);
     w4 = VSUB(w1,w2);
     v1 = LOADH(LOADL(v1,x+i1),x+i7);
@@ -496,7 +496,7 @@ public:
   }
 };
 
-template<int istride, int ostride> 
+template<int istride, int ostride>
 class __fft<istride,ostride,8,-1> {
 public:
   enum { N = istride*8,
@@ -509,11 +509,11 @@ public:
          i6 = i5 + istride, o6 = o5 + ostride,
          i7 = i6 + istride, o7 = o6 + ostride };
   static inline void execute(t_fft *x, t_fft *y, int step) {
-    simd_vector v1,v2,v3,v4,v5,v6,v7,v8;
-    simd_vector x02,x37,x15,x17,x53,x46;    
-    simd_vector w1, w2, w3, w4;
+    simd_vector v1 = {}, v2 = {}, v3,v4,v5,v6,v7,v8;
+    simd_vector x02,x37,x15,x17,x53,x46;
+    simd_vector w1 = {}, w2 = {}, w3, w4;
     w1 = LOADH(LOADL(w1,x+i0),x+i2);
-    w2 = LOADH(LOADL(w2,x+i4),x+i6);	
+    w2 = LOADH(LOADL(w2,x+i4),x+i6);
     w3 = VADD(w1,w2);
     w4 = VSUB(w1,w2);
     v1 = LOADH(LOADL(v1,x+i1),x+i3);
@@ -576,7 +576,7 @@ public:
 
 #else // !ENABLE_SSE
 
-template<int istride, int ostride, int dir> 
+template<int istride, int ostride, int dir>
   class __fft<istride,ostride,4,dir> {
  public:
   enum { N = istride*4,
@@ -612,7 +612,7 @@ template<int istride, int ostride, int dir>
   }
 };
 
-template<int istride, int ostride> 
+template<int istride, int ostride>
 class __fft<istride,ostride,8,1> {
 public:
   enum { N = istride*8,
@@ -623,7 +623,7 @@ public:
          i4 = i3 + istride, o4 = o3 + ostride,
          i5 = i4 + istride, o5 = o4 + ostride,
          i6 = i5 + istride, o6 = o5 + ostride,
-         i7 = i6 + istride, o7 = o6 + ostride,         
+         i7 = i6 + istride, o7 = o6 + ostride,
          ir0 = i0<<1, ii0 = ir0 + 1, or0 = o0<<1, oi0 = or0 + 1,
          ir1 = i1<<1, ii1 = ir1 + 1, or1 = o1<<1, oi1 = or1 + 1,
          ir2 = i2<<1, ii2 = ir2 + 1, or2 = o2<<1, oi2 = or2 + 1,
@@ -678,7 +678,7 @@ public:
   }
 };
 
-template<int istride, int ostride> 
+template<int istride, int ostride>
 class __fft<istride,ostride,8,-1> {
 public:
   enum { N = istride*8,
@@ -827,7 +827,7 @@ public:
 template<int N, int dir>
 class fft_reorder {
 public:
-  enum { radix = LastFactor<N>::value, 
+  enum { radix = LastFactor<N>::value,
          ostride = N / radix,
          s = N * sizeof(t_fft) };
   static const fft_order<N> order;
@@ -846,7 +846,7 @@ const fft_order<N> fft_reorder<N,dir>::order;
 
 template<int N, int dir>
 void fft(t_fft *x) {
-  enum { radix = Factor<N>::value, 
+  enum { radix = Factor<N>::value,
          stride = N / radix };
   _fft<0,stride,radix,dir>::execute(x);
   fft_reorder<N,dir>::reorder(x);
@@ -856,7 +856,7 @@ template<int N, int dir>
 void fftr(t_fft *x) {
   enum { Nover2 = N/2,
          Nover4 = N/4,
-         radix = Factor<Nover2>::value, 
+         radix = Factor<Nover2>::value,
          stride = Nover2 / radix };
   static const FloatTwiddles<N,dir> t;
   static const float *s = t.s;
