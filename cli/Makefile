@@ -17,7 +17,10 @@ LINK_CFLAGS ?= -lpthread -lm \
 
 all: sbsms
 
-sbsms:
+debug: clean
+	OPT_FLAGS="-O0 -g" make
+
+sbsms: clean
 	$(CXX) $(INCLUDE_FLAGS) $(EXTRA_FLAGS) \
 		$(OPT_FLAGS) $(CFLAGS) $(PLAT_FLAGS) \
 		src/*.cpp ../src/*.cpp \
