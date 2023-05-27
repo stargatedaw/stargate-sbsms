@@ -5,13 +5,13 @@ The original has been unmaintained for many years, this is a hard fork that
 has diverged significantly from the original.
 
 # Current Differences
-* Support for Unicode/UTF-16/widechar file paths for `soundstretch.exe`
+* Support for Unicode/UTF-16/widechar file paths for `sbsms.exe` CLI args
   on Windows (as to say, does not fail when run on non US/English locales)
 * Unused functionality (in Stargate DAW) has been stripped away, this is now
   just the CLI without the library
 * Remove the original build system (clunky, outdated autotools), replace with
   a streamlined and simple Makefile
-* Vastly improved support for Windows/MSYS2 and M1 Mac
+* Vastly improved support for Windows/MSYS2, M1 Mac and ARM on Linux
 * Remove all x86 assembly language
 
 # Original README
